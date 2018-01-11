@@ -165,6 +165,10 @@ class Config(dict):
 					'name': {'type': 'string', 'required': True, 'regex': '[a-z][a-z0-9]*(-[a-z0-9]+)*$'},
 					# Rename `type` in packages to `package-type` to not trip up cerberus
 					'type': {'rename': 'package-type'}}}},
+			'runtime_configs': {'type': 'list', 'default': [], 'schema': {
+				'type': 'dict', 'schema': {
+					'name': {'type': 'string', 'required': True, 'regex': '[a-z][a-z0-9]*(-[a-z0-9]+)*$'},
+					'runtime_config': {'type': 'string', 'required': True}}}}
 		}
 
 		self.update(self._validator.validate(self, schema))
@@ -223,6 +227,10 @@ class Config(dict):
 		self.tile_metadata['metadata_version'] = str(self['metadata_version'])
 		# Note: tile.py uses self['stemcell_criteria']
 		self.tile_metadata['stemcell_criteria'] = self['stemcell_criteria']
+
+		# TODO: this probably should also be handled differently
+		self.tile_metadata['runtime_configs'] = self.get('runtime_configs')
+
 
 	def default_stemcell(self):
 		stemcell_criteria = self.get('stemcell_criteria', {})
